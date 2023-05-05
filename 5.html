@@ -1,0 +1,63 @@
+<!DOCTYPE html> 
+<html> 
+
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+ <title>Image Gallery</title> 
+ <script> 
+ 
+function displayImages() {
+    
+    // получаем значения двух input 
+    var page = parseInt(document.getElementById("page").value);
+    var limit = parseInt(document.getElementById("limit").value);
+
+    // проверим полученные данные
+    if (!Number.isInteger(page) || !Number.isInteger(limit) || page < 1 || page > 10 || limit < 1 || limit > 10) {
+      alert("Пожалуйста введите целые числа от 1 до 10");
+      return;
+    }
+
+    // очищаем существующие картинки
+    imgList.innerHTML = ""; // Clear the existing images 
+
+    // создаем объект XMLHttpRequest
+    var xhr = new XMLHttpRequest();
+
+    // создаем URL для запроса
+    var url = `https://picsum.photos/v2/list?page=${page}&limit=${limit}`;
+
+    // отправляем GET запрос на сервер
+    xhr.open('GET', url, true);
+    xhr.send();
+
+    // обрабатываем ответ сервера
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+      var response = JSON.parse(xhr.responseText);
+        console.log(response);
+        
+        // выводим полученные данные на страницу
+        var imgList = document.getElementById('imgList');
+        response.forEach((item) => {
+          imgList.innerHTML += `<img src="${item.download_url}" alt="${item.author}">`;
+        });
+     }
+   }
+}
+ </script> 
+</head> 
+
+<body> 
+ <label for="page">Page:</label> 
+ <input type="text" id="page"> 
+
+ <label for="limit">Limit:</label> 
+ <input type="text" id="limit"> 
+
+ <button onclick="displayImages()">Отобразить изображения</button> 
+
+ <div id="imgList"></div> 
+</body> 
+
+</html>
